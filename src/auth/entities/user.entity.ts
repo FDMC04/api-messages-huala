@@ -1,4 +1,4 @@
-// import { Product } from '../../products/entities/product.entity';
+import { Chat } from 'src/chats/entities/chat.entity';
 import {
   BeforeInsert,
   BeforeUpdate,
@@ -32,8 +32,8 @@ export class User {
   })
   roles: string[];
 
-  // @OneToMany(() => Product, (product) => product.user)
-  // product: Product;
+  @OneToMany(() => Chat, (chat) => chat.user)
+  chats: Chat[];
 
   @BeforeInsert()
   checkFieldsBeforeInsert() {

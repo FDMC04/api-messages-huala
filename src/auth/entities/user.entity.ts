@@ -1,10 +1,8 @@
-import { Chat } from 'src/chats/entities/chat.entity';
 import {
   BeforeInsert,
   BeforeUpdate,
   Column,
   Entity,
-  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
@@ -31,9 +29,6 @@ export class User {
     default: ['user'],
   })
   roles: string[];
-
-  @OneToMany(() => Chat, (chat) => chat.user)
-  chats: Chat[];
 
   @BeforeInsert()
   checkFieldsBeforeInsert() {

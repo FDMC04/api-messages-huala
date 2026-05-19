@@ -1,5 +1,11 @@
-import { User } from 'src/auth/entities/user.entity';
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  PrimaryGeneratedColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+  OneToMany,
+} from 'typeorm';
 
 @Entity({ name: 'chats' })
 export class Chat {
@@ -9,13 +15,51 @@ export class Chat {
   @Column('text', {
     unique: true,
   })
-  name: string;
+  nombre: string;
 
   @Column('text', {
     array: true,
   })
-  contacts: string[];
+  participantes: string[];
 
-  @ManyToOne(() => User, (user) => user.chats)
-  user: User;
+  @Column('int')
+  tipo: number; // 0 = privado, 1 = grupo
+
+  @Column({
+    type: 'jsonb',
+    default: () => "'[]'",
+  })
+  mensajes: {
+    id: string;
+    remitente: string;
+    mensaje: string;
+    fecha: Date;
+  }[];
+
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
+
+  @Column('text', {
+    nullable: true,
+  })
+  ultimoMensaje?: string;
+
+  @Column({
+    type: 'timestamp',
+    nullable: true,
+  })
+  ultimoMensajeFecha?: Date;
+
+  @Column('text', {
+    nullable: true,
+  })
+  admin?: string;
+
+  @Column('text', {
+    nullable: true,
+  })
+  portada?: string;
 }

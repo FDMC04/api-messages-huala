@@ -1,15 +1,61 @@
-import { IsArray, IsString, MinLength } from 'class-validator';
-import { User } from 'src/auth/entities/user.entity';
+import { Type } from 'class-transformer';
+import {
+  IsArray,
+  IsDateString,
+  IsInt,
+  IsOptional,
+  IsString,
+  IsUUID,
+  MinLength,
+  ValidateNested,
+} from 'class-validator';
+
+export class CreateMessageDto {
+  @IsUUID()
+  id: string;
+
+  @IsString()
+  @MinLength(1)
+  remitente: string;
+
+  @IsString()
+  @MinLength(1)
+  mensaje: string;
+
+  @IsDateString()
+  fecha: Date;
+}
 
 export class CreateChatDto {
   @IsString()
   @MinLength(1)
-  name: string;
+  nombre: string;
 
   @IsString({ each: true })
   @IsArray()
-  contacts: string[];
+  participantes: string[];
 
+  @IsInt()
+  tipo: number;
+
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => CreateMessageDto)
+  mensajes: CreateMessageDto[];
+
+  @IsOptional()
   @IsString()
-  user: User;
+  ultimoMensaje?: string;
+
+  @IsOptional()
+  @IsDateString()
+  ultimoMensajeFecha?: Date;
+
+  @IsOptional()
+  @IsString()
+  admin?: string;
+
+  @IsOptional()
+  @IsString()
+  portada?: string;
 }

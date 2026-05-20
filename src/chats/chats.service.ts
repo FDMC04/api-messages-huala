@@ -203,6 +203,10 @@ export class ChatsService {
 
     chat.mensajes = [...(chat.mensajes ?? []), nuevoMensaje];
 
+    chat.ultimoMensaje = nuevoMensaje.mensaje;
+
+    chat.ultimoMensajeFecha = nuevoMensaje.fecha;
+
     const queryRunner = this.dataSource.createQueryRunner();
 
     await queryRunner.connect();

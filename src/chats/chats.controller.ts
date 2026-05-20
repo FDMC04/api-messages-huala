@@ -28,37 +28,31 @@ export class ChatsController {
   }
 
   // Busca todas las conversaciones en las que esta involucrado el usuario
-  @Get(':user')
+  @Get()
   @Auth(ValidRoles.user)
-  findAll(@Param('user', ParseUUIDPipe) user: string) {
+  findAll(@GetUser() user: User) {
     return this.chatsService.findAll(user);
   }
 
   // Busca una conversacion en especifico en el que este involucrado el usuario
-  @Get(':user/:id')
+  @Get(':id')
   @Auth(ValidRoles.user)
-  findOne(
-    @Param('user', ParseUUIDPipe) user: string,
-    @Param('id', ParseUUIDPipe) id: string,
-  ) {
+  findOne(@GetUser() user: User, @Param('id', ParseUUIDPipe) id: string) {
     return this.chatsService.findOne(user, id);
   }
 
   // Busca una conversacion por el nombre de la conversacion y en la que este involucrado el usuario
-  @Get(':user/search/:term')
+  @Get('search/:term')
   @Auth(ValidRoles.user)
-  findAllBy(
-    @Param('user', ParseUUIDPipe) user: string,
-    @Param('term') term: string,
-  ) {
+  findAllBy(@GetUser() user: User, @Param('term') term: string) {
     return this.chatsService.findAllBy(user, term);
   }
 
   // Actualiza los chats
-  @Patch(':user/:id')
+  @Patch(':id')
   @Auth(ValidRoles.user)
   update(
-    @Param('user', ParseUUIDPipe) user: string,
+    @GetUser() user: User,
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateChatDto: UpdateChatDto,
   ) {
@@ -66,10 +60,9 @@ export class ChatsController {
   }
 
   // Actualizar mensajes
-  @Patch('message/:user/:id')
+  @Patch('message/:id')
   @Auth(ValidRoles.user)
   updateMessage(
-    // @Param('user', ParseUUIDPipe) user: string,
     @GetUser() user: User,
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateMessageDto: UpdateMessageDto,
@@ -78,12 +71,9 @@ export class ChatsController {
   }
 
   // Elimina los chas
-  @Delete(':user/:id')
+  @Delete(':id')
   @Auth(ValidRoles.user)
-  remove(
-    @Param('user', ParseUUIDPipe) user: string,
-    @Param('id', ParseUUIDPipe) id: string,
-  ) {
+  remove(@GetUser() user: User, @Param('id', ParseUUIDPipe) id: string) {
     return this.chatsService.remove(user, id);
   }
 }

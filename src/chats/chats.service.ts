@@ -98,10 +98,11 @@ export class ChatsService {
 
   // ? Busqueda de todos los chats de un usuario
 
-  async findAll(user: string) {
+  async findAll(user: User) {
+    const { id } = user;
     const chats = await this.chatRepository
       .createQueryBuilder('chat')
-      .where('chat.participantes @> ARRAY[:user]', { user })
+      .where('chat.participantes @> ARRAY[:id]', { id })
       .getMany();
     return chats;
   }
@@ -110,18 +111,19 @@ export class ChatsService {
 
   // TODO - Busqueda de un chat de un usuario
 
-  async findOne(user: string, id: string) {
+  async findOne(user: User, idChat: string) {
+    const { id } = user;
     let chat: Chat | null;
-    if (isUUID(id)) {
+    if (isUUID(idChat)) {
       chat = await this.chatRepository
         .createQueryBuilder('chat')
-        .where('chat.participantes @> ARRAY[:user]', { user })
-        .andWhere('chat.id = :id', { id })
+        .where('chat.participantes @> ARRAY[:id]', { id })
+        .andWhere('chat.id = :idChat', { idChat })
         .getOne();
     } else {
       throw new BadRequestException(`Incorrect Id`);
     }
-    if (!chat) throw new NotFoundException(`Chat with id: ${id} not found`);
+    if (!chat) throw new NotFoundException(`Chat with id: ${idChat} not found`);
     return chat;
   }
 
@@ -129,16 +131,14 @@ export class ChatsService {
 
   // ! - Busca los chats por nombre de un usuario
 
-  async findAllBy(user: string, term: string) {
+  async findAllBy(user: User, term: string) {
+    const { id } = user;
     if (!term) throw new NotFoundException(`Name is required`);
     const chat = await this.chatRepository
       .createQueryBuilder('chat')
       .where('chat.nombre LIKE :term', { term: `%${term}%` })
-      .andWhere('chat.participantes @> ARRAY[:user]', { user })
+      .andWhere('chat.participantes @> ARRAY[:id]', { id })
       .getMany();
-    // .find({
-    //   where: { nombre: ILike(`%${term}%`), participantes: user },
-    // });
 
     if (!chat.length) {
       throw new NotFoundException(`chat with term: ${term} not found`);
@@ -148,7 +148,7 @@ export class ChatsService {
 
   // !
 
-  async update(user: string, id: string, updateChatDto: UpdateChatDto) {
+  async update(user: User, id: string, updateChatDto: UpdateChatDto) {
     const findInSide = await this.findOne(user, id);
 
     if (!findInSide) {
@@ -181,11 +181,12 @@ export class ChatsService {
 
   async updateMessage(
     user: User,
-    idChat: string,
+    id: string,
     updateMessageDto: UpdateMessageDto,
   ) {
-    const { id, fullName } = user;
-    const chat = await this.findOne(id, idChat);
+    const idUser = user.id;
+    const nameUser = user.fullName;
+    const chat = await this.findOne(user, id);
 
     if (!chat) {
       throw new NotFoundException(
@@ -195,8 +196,8 @@ export class ChatsService {
 
     const nuevoMensaje = {
       id: crypto.randomUUID(),
-      remitenteId: id,
-      remitenteName: fullName,
+      remitenteId: idUser,
+      remitenteName: nameUser,
       mensaje: updateMessageDto.mensaje,
       fecha: new Date(),
     };
@@ -227,7 +228,7 @@ export class ChatsService {
     }
   }
 
-  async remove(user: string, id: string) {
+  async remove(user: User, id: string) {
     const chat = await this.findOne(user, id);
     await this.chatRepository.remove(chat);
   }

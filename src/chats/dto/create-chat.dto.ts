@@ -16,7 +16,11 @@ export class CreateMessageDto {
 
   @IsString()
   @MinLength(1)
-  remitente: string;
+  remitenteId: string;
+
+  @IsString()
+  @MinLength(1)
+  remitenteName: string;
 
   @IsString()
   @MinLength(1)

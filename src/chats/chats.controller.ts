@@ -11,9 +11,10 @@ import {
 import { ChatsService } from './chats.service';
 import { CreateChatDto } from './dto/create-chat.dto';
 import { UpdateChatDto } from './dto/update-chat.dto';
-import { Auth } from 'src/auth/decorators';
+import { Auth, GetUser } from 'src/auth/decorators';
 import { ValidRoles } from 'src/auth/interfaces';
 import { UpdateMessageDto } from './dto/update-message.dto';
+import { User } from 'src/auth/entities/user.entity';
 
 @Controller('chats')
 export class ChatsController {
@@ -68,7 +69,8 @@ export class ChatsController {
   @Patch('message/:user/:id')
   @Auth(ValidRoles.user)
   updateMessage(
-    @Param('user', ParseUUIDPipe) user: string,
+    // @Param('user', ParseUUIDPipe) user: string,
+    @GetUser() user: User,
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateMessageDto: UpdateMessageDto,
   ) {

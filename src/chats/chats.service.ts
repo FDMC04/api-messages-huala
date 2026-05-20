@@ -180,11 +180,12 @@ export class ChatsService {
   }
 
   async updateMessage(
-    user: string,
-    id: string,
+    user: User,
+    idChat: string,
     updateMessageDto: UpdateMessageDto,
   ) {
-    const chat = await this.findOne(user, id);
+    const { id, fullName } = user;
+    const chat = await this.findOne(id, idChat);
 
     if (!chat) {
       throw new NotFoundException(
@@ -194,7 +195,8 @@ export class ChatsService {
 
     const nuevoMensaje = {
       id: crypto.randomUUID(),
-      remitente: updateMessageDto.remitente,
+      remitenteId: id,
+      remitenteName: fullName,
       mensaje: updateMessageDto.mensaje,
       fecha: new Date(),
     };

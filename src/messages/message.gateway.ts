@@ -59,9 +59,6 @@ export class MessageGateway
     //   message: payload.message || 'no-message',
     // });
     // ! Emitir a todos
-    this.wss.emit('message-from-server', {
-      fullName: this.messageService.getUserFullName(client.id),
-      message: payload.message || 'no-message',
-    });
+    this.wss.emit('message-from-server', payload);
   }
 }

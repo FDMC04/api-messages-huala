@@ -31,7 +31,8 @@ export class Chat {
   })
   mensajes: {
     id: string;
-    remitente: string;
+    remitenteId: string;
+    remitenteName: string;
     mensaje: string;
     fecha: Date;
   }[];

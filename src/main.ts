@@ -18,8 +18,5 @@ async function bootstrap() {
   });
   await app.listen(process.env.PORT ?? 3000);
   logger.log(`App running on port ${process.env.PORT || 3000}`);
-  logger.log(`Cloud-Name ${process.env.CLOUD_NAME}`);
-  logger.log(`Cloud-Key ${process.env.CLOUD_KEY}`);
-  logger.log(`Cloud-Secret ${process.env.CLOUD_SECRET}`);
 }
 bootstrap();

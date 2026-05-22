@@ -13,12 +13,15 @@ import { DataSource, ILike, In, Repository } from 'typeorm';
 import { isUUID } from 'class-validator';
 import { User } from 'src/auth/entities/user.entity';
 import { UpdateMessageDto } from './dto/update-message.dto';
+import { cloudinary } from '../config/cloudinary.config';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class ChatsService {
   private readonly logger = new Logger('ChatsService');
 
   constructor(
+    private readonly configService: ConfigService,
     @InjectRepository(Chat)
     private readonly chatRepository: Repository<Chat>,
 
@@ -26,7 +29,13 @@ export class ChatsService {
     private readonly userRepository: Repository<User>,
 
     private readonly dataSource: DataSource,
-  ) {}
+  ) {
+    cloudinary.config({
+      cloud_name: this.configService.get<string>('CLOUD_NAME'),
+      api_key: this.configService.get<string>('CLOUD_KEY'),
+      api_secret: this.configService.get<string>('CLOUD_SECRET'),
+    });
+  }
 
   // ! Creacion de un chat
 
@@ -198,7 +207,9 @@ export class ChatsService {
       id: crypto.randomUUID(),
       remitenteId: idUser,
       remitenteName: nameUser,
+      tipo: updateMessageDto.tipo,
       mensaje: updateMessageDto.mensaje,
+      imageUrl: updateMessageDto.imageUrl,
       fecha: new Date(),
     };
 
@@ -231,6 +242,19 @@ export class ChatsService {
   async remove(user: User, id: string) {
     const chat = await this.findOne(user, id);
     await this.chatRepository.remove(chat);
+  }
+
+  async uploadImage(file: Express.Multer.File) {
+    try {
+      const uploaded = await cloudinary.uploader.upload(file.path, {
+        folder: 'chat-app',
+      });
+      return {
+        url: uploaded.secure_url,
+      };
+    } catch (error) {
+      this.handleDBExceptions(error);
+    }
   }
 
   private handleDBExceptions(error: any) {

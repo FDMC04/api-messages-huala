@@ -7,6 +7,8 @@ import {
   Param,
   Delete,
   ParseUUIDPipe,
+  UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
 import { ChatsService } from './chats.service';
 import { CreateChatDto } from './dto/create-chat.dto';
@@ -15,6 +17,8 @@ import { Auth, GetUser } from 'src/auth/decorators';
 import { ValidRoles } from 'src/auth/interfaces';
 import { UpdateMessageDto } from './dto/update-message.dto';
 import { User } from 'src/auth/entities/user.entity';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
 
 @Controller('chats')
 export class ChatsController {
@@ -75,5 +79,18 @@ export class ChatsController {
   @Auth(ValidRoles.user)
   remove(@GetUser() user: User, @Param('id', ParseUUIDPipe) id: string) {
     return this.chatsService.remove(user, id);
+  }
+
+  // Enviar imagenes a cloudinary
+  @Post('upload')
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: diskStorage({
+        destination: './uploads',
+      }),
+    }),
+  )
+  uploadFile(@UploadedFile() file: Express.Multer.File) {
+    return this.chatsService.uploadImage(file);
   }
 }

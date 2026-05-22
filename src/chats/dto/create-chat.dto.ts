@@ -23,8 +23,13 @@ export class CreateMessageDto {
   remitenteName: string;
 
   @IsString()
-  @MinLength(1)
-  mensaje: string;
+  tipo: string;
+
+  @IsString()
+  mensaje?: string;
+
+  @IsString()
+  imageUrl?: string;
 
   @IsDateString()
   fecha: Date;

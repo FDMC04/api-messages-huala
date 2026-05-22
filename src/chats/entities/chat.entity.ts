@@ -33,7 +33,9 @@ export class Chat {
     id: string;
     remitenteId: string;
     remitenteName: string;
-    mensaje: string;
+    tipo: string; // 'text' | 'image';
+    mensaje?: string;
+    imageUrl?: string;
     fecha: Date;
   }[];
 

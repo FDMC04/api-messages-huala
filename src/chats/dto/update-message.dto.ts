@@ -1,6 +1,14 @@
-import { IsString } from 'class-validator';
+import { IsOptional, IsString } from 'class-validator';
 
 export class UpdateMessageDto {
   @IsString()
-  mensaje: string;
+  tipo: string;
+
+  @IsOptional()
+  @IsString()
+  mensaje?: string;
+
+  @IsOptional()
+  @IsString()
+  imageUrl?: string;
 }

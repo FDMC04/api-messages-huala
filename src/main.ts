@@ -13,7 +13,7 @@ async function bootstrap() {
     }),
   );
   app.enableCors({
-    origin: 'http://localhost:4200',
+    origin: 'https://cute-sprite-a9f896.netlify.app',
     credentials: true,
   });
   await app.listen(process.env.PORT ?? 3000);

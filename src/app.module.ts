@@ -10,7 +10,7 @@ import { ChatsModule } from './chats/chats.module';
       isGlobal: true,
     }),
     TypeOrmModule.forRoot({
-      ssl: process.env.STAGE === 'prod'
+      ssl: process.env.STAGE === 'prod',
       type: 'postgres',
       host: process.env.DB_HOST,
       port: +process.env.DB_PORT!,
